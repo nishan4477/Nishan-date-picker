@@ -105,6 +105,7 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
                       setActiveDayId(date.dayid)
                       displayDate(date.year,date.nepaliMonth,date.gate)
                       onDateSelect && onDateSelect(date.dayid)
+                      setIsActive(false)
                       
                     } }
                     className={`calendar-item ${
