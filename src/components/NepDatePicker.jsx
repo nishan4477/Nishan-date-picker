@@ -3,7 +3,7 @@ import "./NepDatePicker.css";
 import { GrFormPrevious, GrFormNext } from "react-icons/gr";
 
 const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
-  const [isActive, setIsActive] = useState(true);
+  const [isActive, setIsActive] = useState(false);
   const [data, setData] = useState(null);
   const [activeDayId, setActiveDayId] = useState(null);
   const [apiYear,setApiYear]= useState(null)
@@ -62,7 +62,7 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
 
     fetchDate();
   }, [apiYear,apiMonth]);
-  console.log("apiRes", data);
+
   return (
     <div className="nepali-calendar">
       <input
@@ -70,48 +70,48 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
         onClick={() => setIsActive(!isActive)}
         value={InputDateDisplay}
       />
-      {isActive && (
+      {data && isActive && (
         <div className="calendar">
           <div className="calendar-header">
             <div
-              onClick={() => handlePrevBtn(data?.prevYear, data?.prevMonth)}
+              onClick={() => handlePrevBtn(data.prevYear, data.prevMonth)}
               className="action-button"
             >
               <GrFormPrevious />
             </div>
-            <div className="date-tittle">{`${data?.curYear} ${
-              dateConfig[data?.curMonth]
+            <div className="date-tittle">{`${data.curYear} ${
+              dateConfig[data.curMonth]
             }`}</div>
             <div
-              onClick={() => handleNextBtn(data?.nextYear, data?.nextMonth)}
+              onClick={() => handleNextBtn(data.nextYear, data.nextMonth)}
               className="action-button"
             >
               <GrFormNext />
             </div>
           </div>
           <div className="calendar-day">
-            {weekDay?.map((day, index) => (
+            {weekDay.map((day, index) => (
               <span key={index}>{day}</span>
             ))}
           </div>
           <div className="calendar-container">
             <div className="calendar-body">
-              {data?.monthdata?.map((date, index) => {
-                const isActive = date?.dayid === activeDayId;
+              {data.monthdata.map((date, index) => {
+                const isActive = date.dayid === activeDayId;
                 return (
                   <div
-                    style={{ color: date?.eventColour }}
+                    style={{ color: date.eventColour }}
                     onClick={() =>{ 
-                      setActiveDayId(date?.dayid)
-                      displayDate(date?.year,date?.nepaliMonth,date?.gate)
-                      onDateSelect && onDateSelect(date?.dayid)
+                      setActiveDayId(date.dayid)
+                      displayDate(date.year,date.nepaliMonth,date.gate)
+                      onDateSelect && onDateSelect(date.dayid)
                       
                     } }
                     className={`calendar-item ${
-                      date?.active ? "" : "disabled"
+                      date.active ? "" : "disabled"
                     } ${isActive ? "active" : ""}`}
                   >
-                    {date?.gate}
+                    {date.gate}
                   </div>
                 );
               })}

@@ -1,7 +1,7 @@
 {
-  "name": "nep-date-picker",
+  "name": "neps-date-picker",
   "version": "1.0.0",
-  "description": "A simple nepali date picker",
+  "description": "A simple nepali date picker and also use onDateSelect props in the component to get the value of date token in call back function",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
