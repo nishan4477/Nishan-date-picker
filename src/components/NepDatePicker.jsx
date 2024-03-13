@@ -15,7 +15,7 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
   const [apiYear,setApiYear]= useState(null)
   const [apiMonth,setApiMonth] = useState(null)
   const[InputDateDisplay,setInputDateDisplay] = useState(null)
-  const weekDay = ["Sun", "mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
+  const weekDay = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
 
   function handlePrevBtn(year, prevMonth) {
     if(year && prevMonth){

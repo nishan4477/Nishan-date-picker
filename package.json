@@ -1,6 +1,6 @@
 {
   "name": "neps-date-picker",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "A simple nepali date picker and also use onDateSelect props in the component to get the value of date token in call back function",
   "main": "dist/index.js",
   "scripts": {
