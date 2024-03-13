@@ -2,6 +2,12 @@ import React, { useEffect, useState } from "react";
 import "./NepDatePicker.css";
 import { GrFormPrevious, GrFormNext } from "react-icons/gr";
 
+/**
+ * @description This is a simple date picker app which will return a value of date token as callback function in onDateSelect and also add the domain of base url. 
+ * @param {domain:string,onDateSelect:number } param0 
+ * @returns 
+ */
+
 const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
   const [isActive, setIsActive] = useState(false);
   const [data, setData] = useState(null);
@@ -66,6 +72,7 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
   return (
     <div className="nepali-calendar">
       <input
+      
         className="calendar-nepali"
         onClick={() => setIsActive(!isActive)}
         value={InputDateDisplay}
