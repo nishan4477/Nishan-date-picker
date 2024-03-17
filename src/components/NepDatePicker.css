@@ -166,3 +166,12 @@
   height: 32px;
   border: 1px solid #29abe2;
 }
+
+.calendar-item-current{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #01579b;
+  color: white;
+  box-shadow: 1px 1px 10px rgba(72, 72, 72, 0.915);
+}

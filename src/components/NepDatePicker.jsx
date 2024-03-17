@@ -4,11 +4,11 @@ import { GrFormPrevious, GrFormNext } from "react-icons/gr";
 
 /**
  * @description This is a simple date picker app which will return a value of date token as callback function in onDateSelect and also add the domain of base url. 
- * @param {domain:string,onDateSelect:number } param0 
+ * @param {domain:string,onDateSelect:number,selectToday:boolean } param0 
  * @returns 
  */
 
-const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
+const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect,selectToday}) => {
   const [isActive, setIsActive] = useState(false);
   const [data, setData] = useState(null);
   const [activeDayId, setActiveDayId] = useState(null);
@@ -16,6 +16,11 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
   const [apiMonth,setApiMonth] = useState(null)
   const[InputDateDisplay,setInputDateDisplay] = useState(null)
   const weekDay = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
+const todayEngYear = new Date().getFullYear()
+  const todayEngMonth = new Date().getMonth() + 1;
+  const todayEngDay = new Date().getDate()
+
+  console.log("todayMOnth",todayEngMonth , "todayDate", todayEngDay)
 
   function handlePrevBtn(year, prevMonth) {
     if(year && prevMonth){
@@ -51,6 +56,8 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
     11: "फागुन",
     12: "चैत",
   };
+
+
   useEffect(() => {
     const fetchDate = async (year, month) => {
       try {
@@ -69,12 +76,25 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
     fetchDate();
   }, [apiYear,apiMonth]);
 
+  useEffect(()=>{
+    if(selectToday===true && data!==null){
+   const todayData = data.monthdata.find((item) =>(
+    item.englishYear== todayEngYear && item.englishMonth==todayEngMonth && item.englishDate == todayEngDay
+
+   ))
+
+   onDateSelect(todayData.dayid)
+   displayDate(todayData.year,todayData.nepaliMonth,todayData.gate)
+    setActiveDayId(todayData.dayid)
+    }
+      },[data])
+
   return (
-    <div className="nepali-calendar">
+    <div onClick={() => setIsActive(!isActive)} className="nepali-calendar">
       <input
       
         className="calendar-nepali"
-        onClick={() => setIsActive(!isActive)}
+        
         value={InputDateDisplay}
       />
       {data && isActive && (
@@ -104,9 +124,11 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
           <div className="calendar-container">
             <div className="calendar-body">
               {data.monthdata.map((date, index) => {
+                
                 const isActive = date.dayid === activeDayId;
+                const today = date.englishMonth == todayEngMonth && date.englishDate == todayEngDay;
                 return (
-                  <div
+                  <div key={index}
                     style={{ color: date.eventColour }}
                     onClick={() =>{ 
                       setActiveDayId(date.dayid)
@@ -117,7 +139,7 @@ const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect}) => {
                     } }
                     className={`calendar-item ${
                       date.active ? "" : "disabled"
-                    } ${isActive ? "active" : ""}`}
+                    } ${isActive ? "active" : ""} ${today ? "calendar-item-current" : ""}`}
                   >
                     {date.gate}
                   </div>
