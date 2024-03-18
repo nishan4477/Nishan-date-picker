@@ -3,44 +3,51 @@ import "./NepDatePicker.css";
 import { GrFormPrevious, GrFormNext } from "react-icons/gr";
 
 /**
- * @description This is a simple date picker app which will return a value of date token as callback function in onDateSelect and also add the domain of base url. 
- * @param {domain:string,onDateSelect:number,selectToday:boolean } param0 
- * @returns 
+ * @description This is a simple date picker app which will return a value of date token as callback function in onDateSelect and also add the domain of base url.
+ * @param {domain:string,onDateSelect:number,selectToday:boolean,reset:boolean } param0
+ * @returns
  */
 
-const NepDatePicker = ({domain="https://kavre.nivid.app",onDateSelect,selectToday}) => {
+const NepDatePicker = ({
+  domain = "https://kavre.nivid.app",
+  onDateSelect,
+  selectToday,
+  reset,
+}) => {
   const [isActive, setIsActive] = useState(false);
   const [data, setData] = useState(null);
   const [activeDayId, setActiveDayId] = useState(null);
-  const [apiYear,setApiYear]= useState(null)
-  const [apiMonth,setApiMonth] = useState(null)
-  const[InputDateDisplay,setInputDateDisplay] = useState(null)
+  const [apiYear, setApiYear] = useState(null);
+  const [apiMonth, setApiMonth] = useState(null);
+  const [InputDateDisplay, setInputDateDisplay] = useState("YYY-MM-DD");
   const weekDay = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
-const todayEngYear = new Date().getFullYear()
+  const todayEngYear = new Date().getFullYear();
   const todayEngMonth = new Date().getMonth() + 1;
-  const todayEngDay = new Date().getDate()
+  const todayEngDay = new Date().getDate();
 
-  console.log("todayMOnth",todayEngMonth , "todayDate", todayEngDay)
+  console.log("todayMOnth", todayEngMonth, "todayDate", todayEngDay);
 
   function handlePrevBtn(year, prevMonth) {
-    if(year && prevMonth){
-      setApiYear(year)
-      setApiMonth(prevMonth)
+    if (year && prevMonth) {
+      setApiYear(year);
+      setApiMonth(prevMonth);
     }
-
   }
 
   function handleNextBtn(year, nextMonth) {
-    if(year && nextMonth){
-      setApiYear(year)
-      setApiMonth(nextMonth)
+    if (year && nextMonth) {
+      setApiYear(year);
+      setApiMonth(nextMonth);
     }
   }
 
-  function displayDate(year,month,day){
-    const fullDate = `${year}-${month}-${day}`
-    setInputDateDisplay(fullDate)
+  function displayDate(year, month, day) {
+    const fullDate = `${year}-${month}-${day}`;
+    setInputDateDisplay(fullDate);
   }
+
+
+
 
   const dateConfig = {
     1: "बैशाख",
@@ -74,81 +81,98 @@ const todayEngYear = new Date().getFullYear()
     };
 
     fetchDate();
-  }, [apiYear,apiMonth]);
+  }, [apiYear, apiMonth]);
 
-  useEffect(()=>{
-    if(selectToday===true && data!==null){
-   const todayData = data.monthdata.find((item) =>(
-    item.englishYear== todayEngYear && item.englishMonth==todayEngMonth && item.englishDate == todayEngDay
+  useEffect(() => {
+    if (selectToday === true && data !== null) {
+      const todayData = data.monthdata.find(
+        (item) =>
+          item.englishYear == todayEngYear &&
+          item.englishMonth == todayEngMonth &&
+          item.englishDate == todayEngDay
+      );
 
-   ))
-
-   onDateSelect(todayData.dayid)
-   displayDate(todayData.year,todayData.nepaliMonth,todayData.gate)
-    setActiveDayId(todayData.dayid)
+      onDateSelect(todayData.dayid);
+      displayDate(todayData.year, todayData.nepaliMonth, todayData.gate);
+      setActiveDayId(todayData.dayid);
     }
-      },[data])
+  }, [data]);
+  useEffect(()=>{
+
+  setInputDateDisplay("YYY-MM-DD")
+  onDateSelect && onDateSelect("")
+  setActiveDayId(null)
+
+  },[reset])
+
+  
 
   return (
-    <div onClick={() => setIsActive(!isActive)} className="nepali-calendar">
-      <input
-      
-        className="calendar-nepali"
-        
-        value={InputDateDisplay}
-      />
-      {data && isActive && (
-        <div className="calendar">
-          <div className="calendar-header">
-            <div
-              onClick={() => handlePrevBtn(data.prevYear, data.prevMonth)}
-              className="action-button"
-            >
-              <GrFormPrevious />
+    <div className="nepali-calendar-wrapper">
+      <div onClick={() => setIsActive(!isActive)} className="nepali-calendar">
+        <input className="calendar-nepali" value={InputDateDisplay} />
+      </div>
+      <div>
+        {data && isActive && (
+          <div className="calendar">
+            <div className="calendar-header">
+              <div
+                onClick={() => {
+                  debugger;
+                  handlePrevBtn(data.prevYear, data.prevMonth);
+                }}
+                className="action-button"
+              >
+                <GrFormPrevious />
+              </div>
+              <div className="date-tittle">{`${data.curYear} ${
+                dateConfig[data.curMonth]
+              }`}</div>
+              <div
+                onClick={() => handleNextBtn(data.nextYear, data.nextMonth)}
+                className="action-button"
+              >
+                <GrFormNext />
+              </div>
             </div>
-            <div className="date-tittle">{`${data.curYear} ${
-              dateConfig[data.curMonth]
-            }`}</div>
-            <div
-              onClick={() => handleNextBtn(data.nextYear, data.nextMonth)}
-              className="action-button"
-            >
-              <GrFormNext />
+            <div className="calendar-day">
+              {weekDay.map((day, index) => (
+                <span key={index}>{day}</span>
+              ))}
+            </div>
+            <div className="calendar-container">
+              <div className="calendar-body">
+                {data.monthdata.map((date, index) => {
+                  const isActive = date.dayid === activeDayId;
+                  const today =
+                    date.englishMonth == todayEngMonth &&
+                    date.englishDate == todayEngDay;
+                  return (
+                    <div
+                      key={index}
+                      style={{ color: date.eventColour }}
+                      onClick={() => {
+                        debugger;
+                        setActiveDayId(date.dayid);
+                        displayDate(date.year, date.nepaliMonth, date.gate);
+                        onDateSelect && onDateSelect(date.dayid);
+                        setIsActive(false);
+                      }}
+                      className={`calendar-item ${
+                        date.active ? "" : "disabled"
+                      } ${isActive ? "active" : ""} ${
+                        today ? "calendar-item-current" : ""
+                      }`}
+                    >
+                      {date.gate}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-          <div className="calendar-day">
-            {weekDay.map((day, index) => (
-              <span key={index}>{day}</span>
-            ))}
-          </div>
-          <div className="calendar-container">
-            <div className="calendar-body">
-              {data.monthdata.map((date, index) => {
-                
-                const isActive = date.dayid === activeDayId;
-                const today = date.englishMonth == todayEngMonth && date.englishDate == todayEngDay;
-                return (
-                  <div key={index}
-                    style={{ color: date.eventColour }}
-                    onClick={() =>{ 
-                      setActiveDayId(date.dayid)
-                      displayDate(date.year,date.nepaliMonth,date.gate)
-                      onDateSelect && onDateSelect(date.dayid)
-                      setIsActive(false)
-                      
-                    } }
-                    className={`calendar-item ${
-                      date.active ? "" : "disabled"
-                    } ${isActive ? "active" : ""} ${today ? "calendar-item-current" : ""}`}
-                  >
-                    {date.gate}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
