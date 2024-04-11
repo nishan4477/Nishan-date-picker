@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./NepDatePicker.css";
 import { GrFormPrevious, GrFormNext } from "react-icons/gr";
 
 /**
  * @description This is a simple date picker app which will return a value of date token as callback function in onDateSelect and also add the domain of base url.
- * @param {domain:string,onDateSelect:number,selectToday:boolean,reset:boolean } param0
- * @returns
+ * @param {domain:string,onDateSelect:number,selectToday:boolean,reset:boolean,dateToken:number } param0
+ * @returnss
  */
 
 const NepDatePicker = ({
@@ -13,19 +13,19 @@ const NepDatePicker = ({
   onDateSelect,
   selectToday,
   reset,
+  dateToken,
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [data, setData] = useState(null);
   const [activeDayId, setActiveDayId] = useState(null);
   const [apiYear, setApiYear] = useState(null);
   const [apiMonth, setApiMonth] = useState(null);
-  const [InputDateDisplay, setInputDateDisplay] = useState("YYY-MM-DD");
+  const [InputDateDisplay, setInputDateDisplay] = useState("YYYY-MM-DD");
   const weekDay = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
   const todayEngYear = new Date().getFullYear();
   const todayEngMonth = new Date().getMonth() + 1;
   const todayEngDay = new Date().getDate();
 
-  console.log("todayMOnth", todayEngMonth, "todayDate", todayEngDay);
 
   function handlePrevBtn(year, prevMonth) {
     if (year && prevMonth) {
@@ -46,9 +46,6 @@ const NepDatePicker = ({
     setInputDateDisplay(fullDate);
   }
 
-
-
-
   const dateConfig = {
     1: "बैशाख",
     2: "जेठ",
@@ -64,7 +61,6 @@ const NepDatePicker = ({
     12: "चैत",
   };
 
-
   useEffect(() => {
     const fetchDate = async (year, month) => {
       try {
@@ -76,7 +72,6 @@ const NepDatePicker = ({
         const jsonData = await response.json();
         setData(jsonData);
       } catch (e) {
-        console.log("cannot fetch", e);
       }
     };
 
@@ -96,19 +91,43 @@ const NepDatePicker = ({
       displayDate(todayData.year, todayData.nepaliMonth, todayData.gate);
       setActiveDayId(todayData.dayid);
     }
-  }, [data]);
-  useEffect(()=>{
+    if (dateToken && data !== null) {
+      const givenTokenDate = data.monthdata.find(
+        (item) => item.dayid == dateToken
+      );
+      if (givenTokenDate !== undefined) {
+        displayDate(
+          givenTokenDate.year,
+          givenTokenDate.nepaliMonth,
+          givenTokenDate.gate
+        );
+        setActiveDayId(givenTokenDate.dayid);
+        onDateSelect && onDateSelect(givenTokenDate.dayid);
+      }
+    }
+  }, [data, dateToken]);
+  useEffect(() => {
+    setInputDateDisplay("YYYY-MM-DD");
+    onDateSelect && onDateSelect("");
+    setActiveDayId(null);
+  }, [reset]);
+  const wrapperRef = useRef(null);
 
-  setInputDateDisplay("YYY-MM-DD")
-  onDateSelect && onDateSelect("")
-  setActiveDayId(null)
-
-  },[reset])
-
-  
+  useEffect(() => {
+   
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsActive(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [wrapperRef]);
 
   return (
-    <div className="nepali-calendar-wrapper">
+    <div className="nepali-calendar-wrapper" ref={wrapperRef}>
       <div onClick={() => setIsActive(!isActive)} className="nepali-calendar">
         <input className="calendar-nepali" value={InputDateDisplay} />
       </div>
@@ -118,7 +137,6 @@ const NepDatePicker = ({
             <div className="calendar-header">
               <div
                 onClick={() => {
-                  debugger;
                   handlePrevBtn(data.prevYear, data.prevMonth);
                 }}
                 className="action-button"
@@ -152,7 +170,6 @@ const NepDatePicker = ({
                       key={index}
                       style={{ color: date.eventColour }}
                       onClick={() => {
-                        debugger;
                         setActiveDayId(date.dayid);
                         displayDate(date.year, date.nepaliMonth, date.gate);
                         onDateSelect && onDateSelect(date.dayid);
