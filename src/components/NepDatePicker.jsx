@@ -95,7 +95,7 @@ const NepDatePicker = ({
       const givenTokenDate = data.monthdata.find(
         (item) => item.dayid == dateToken
       );
-      if (givenTokenDate !== undefined) {
+      if (givenTokenDate !== undefined ) {
         displayDate(
           givenTokenDate.year,
           givenTokenDate.nepaliMonth,
