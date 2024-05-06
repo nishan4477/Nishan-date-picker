@@ -26,7 +26,6 @@ const NepDatePicker = ({
   const todayEngMonth = new Date().getMonth() + 1;
   const todayEngDay = new Date().getDate();
 
-
   function handlePrevBtn(year, prevMonth) {
     if (year && prevMonth) {
       setApiYear(year);
@@ -71,8 +70,7 @@ const NepDatePicker = ({
         );
         const jsonData = await response.json();
         setData(jsonData);
-      } catch (e) {
-      }
+      } catch (e) {}
     };
 
     fetchDate();
@@ -88,6 +86,7 @@ const NepDatePicker = ({
       );
 
       onDateSelect(todayData.dayid);
+
       displayDate(todayData.year, todayData.nepaliMonth, todayData.gate);
       setActiveDayId(todayData.dayid);
     }
@@ -95,7 +94,7 @@ const NepDatePicker = ({
       const givenTokenDate = data.monthdata.find(
         (item) => item.dayid == dateToken
       );
-      if (givenTokenDate !== undefined ) {
+      if (givenTokenDate !== undefined) {
         displayDate(
           givenTokenDate.year,
           givenTokenDate.nepaliMonth,
@@ -114,7 +113,6 @@ const NepDatePicker = ({
   const wrapperRef = useRef(null);
 
   useEffect(() => {
-   
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsActive(false);
@@ -129,7 +127,7 @@ const NepDatePicker = ({
   return (
     <div className="nepali-calendar-wrapper" ref={wrapperRef}>
       <div onClick={() => setIsActive(!isActive)} className="nepali-calendar">
-        <input className="calendar-nepali" value={InputDateDisplay} />
+        <input readOnly className="calendar-nepali" value={InputDateDisplay} />
       </div>
       <div>
         {data && isActive && (
